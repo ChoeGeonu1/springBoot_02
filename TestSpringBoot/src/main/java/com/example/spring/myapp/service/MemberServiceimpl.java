@@ -27,7 +27,6 @@ public class MemberServiceimpl implements MemberService {
 		int n = memberMapper.getId(dto);
 		return n > 0;
 	}
-
 	// 회원가입
 	@Override
 	public boolean addMember(MemberDto dto) {

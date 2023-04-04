@@ -18,6 +18,7 @@ import com.example.spring.myapp.service.TestTableService;
 public class SpringBootController {
 	@Resource
 	private TestTableService testtableService;
+	
 	@Resource
 	private MemberService memberService;
 	

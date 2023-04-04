@@ -10,7 +10,6 @@ import com.example.spring.mumber.dto.MemberDto;
 
 /**
  * @author CafeAlle
- *
  */
 @Mapper
 public interface MemberMapper {

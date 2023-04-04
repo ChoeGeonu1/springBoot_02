@@ -24,7 +24,6 @@ public class RSACrypto {
 	private Cipher cipher;
 	private SecretKeySpec keySpec;
 	private IvParameterSpec ivParameterSpec;
-	
 	  /* PKCS#5와 PKCS#7 */
     public static final String PADDING = "AES/CBC/PKCS5Padding";
 
