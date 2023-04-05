@@ -11,21 +11,60 @@
 		<table border="1">
 			<thead>
 				<tr>
-					<th>userCode</th>
-					<th>userName</th>
+					<th>순번</th>
+					<th>내용1</th>
+					<th>내용2</th>
 				</tr>
 			</thead>
 			<tbody>
 				<tr th:each="row:${Alllist}">
-					<th th:text="${row.USERCODE}"></th>
-					<th th:text="${row.USERNAME}"></th>
-
+					<th th:text="${row.n_d_no}"></th>
+					<th th:text="${row.value_1}"></th>
+					<th th:text="${row.value_4}"></th>
 				</tr>
+				<!-- <tr th:each="pageList:${pageVo}">
+					<th th:text="!(1 > ${pageList.page * 1.0}/ ${pageList.pageCount})"></th>
+					<th th:text="pageVo.endPage < pageVo.totalPageCount"></th>
+				</tr> -->
 			</tbody>
 
 		</table>
-
+			
 	</div>
-
+<div id="pagination">
+				<!-- 맨 처음 페이지로 이동하는 버튼 -->
+				 <span th:if="${pageVo.startPage > 1}">
+			        <a th:href="@{'list?page=1'}" th:text="'처음&emsp;'"></a>
+			    </span>
+			    <!--
+			
+				<!-- 이전 블록으로 이동하는 버튼 -->
+			    <!-- <span th:if="true==1 > ${pageVo.page *1.0}/ ${ppageVo.pageCount}">
+			    	<a th:href="@{'/list?page='+${pageVo.startPage - 1}}" th:text="'이전'"></a>
+			    </span>  -->
+			    <span th:if="!(1 > ${pageVo.page * 1.0}/ ${pageVo.pageCount})">
+			    <a th:href="@{'/list?page='+${pageVo.startPage - 1}}" th:text="'이전'">오류일때 발생</a>
+			    </span>
+			<!-- <th th:text="true==1 > ${pageList.page *1.0}/ ${pageList.pageCount}"></th> -->
+			    <!-- 시퀀스 보여주는 값을 변경. -->
+			    <span th:each="pageNum : ${#numbers.sequence(pageVo.startPage, pageVo.endPage)}">
+			        <a class="div2" th:href="@{'/list?page='+${pageNum}}" th:text="|&emsp;${pageNum}&emsp;|"></a>
+			    </span>
+				
+			    <!-- 다음 블록으로 이동하는 버튼 -->
+			    <!-- <span th:if="${pageVo.isNext == true}">
+				<a th:href="@{'/list?page='+|${pageVo.endPage + 1}|}" th:text="'다음'"></a>
+			    </span>
+			    endPage < totalPageCount
+			     -->
+			     <span th:if="${pageVo.endPage} < ${pageVo.totalPageCount}">
+				<a th:href="@{'/list?page='+|${pageVo.endPage + 1}|}" th:text="'다음'"></a>
+			    </span>
+				
+			    <!-- 맨 뒷 페이지로 이동하는 버튼 -->
+			    <span th:if="${pageVo.endPage < pageVo.totalPageCount}">
+				<a th:href="@{'/list?page='+${pageVo.totalPageCount}}" th:text="|&emsp;끝|"></a>
+			    </span> 
+			</div>
 </body>
 </html>

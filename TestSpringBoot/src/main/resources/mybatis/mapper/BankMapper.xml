@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+  
+<mapper namespace="com.example.spring.myapp.model.mapper.BankMapper">
+ 
+  <!-- 게시물 총 개수 구하기 -->
+<select id="getListCount" resultType="int">
+    SELECT count(*) as listCnt
+    FROM BANK_DETAILS
+</select>
+
+<select id="getListPage" parameterType="com.example.spring.paging.Pagination" resultType="com.example.spring.BankDto">
+<![CDATA[
+			SELECT 
+			*
+			FROM (
+			SELECT 
+			NUM, NUM as n_d_no,value_1, VALUE_4
+			  FROM (
+			        SELECT 
+			        	 ROW_NUMBER() OVER (ORDER BY N_D_NO,VALUE_1) NUM
+			             ,ID_1||' : '||value_1 AS value_1, ID_4|| ' : '||VALUE_4 AS VALUE_4
+			          FROM TESTUSER.BANK_DETAILS A
+			        ) 
+			 WHERE NUM <=  (#{page} * #{rowCount})
+			)
+			WHERE (((#{page}-1) * #{rowCount}) + 1) <= NUM
+]]>
+</select>
+ 
+</mapper>

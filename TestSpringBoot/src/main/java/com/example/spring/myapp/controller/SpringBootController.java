@@ -7,20 +7,26 @@ import javax.annotation.Resource;
 
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.ModelAndView;
 
+import com.example.spring.BankDto;
 import com.example.spring.mumber.dto.MemberDto;
+import com.example.spring.myapp.service.BankService;
 import com.example.spring.myapp.service.MemberService;
-import com.example.spring.myapp.service.TestTableService;
+import com.example.spring.paging.Pagination;
 
 @RestController
 public class SpringBootController {
-	@Resource
-	private TestTableService testtableService;
+	//@Resource
+	//private TestTableService testtableService;
 	
 	@Resource
 	private MemberService memberService;
+
+	@Resource
+	private BankService bankService;
 	
 	@RequestMapping(value="index")
 	public ModelAndView indexView(Map<String, Object> map) throws Exception{
@@ -49,15 +55,20 @@ public class SpringBootController {
 	}
 	
 	@RequestMapping(value="list")
-	public ModelAndView AllListView(Map<String, Object> map) throws Exception{
+	public ModelAndView AllListView(Map<String, Object> map ,@RequestParam(value = "page", defaultValue = "1") final int page) throws Exception{
 		System.out.println("#### list");
 		ModelAndView mav = new ModelAndView();
 		
-		List<Map<String, Object>> AllList = testtableService.SelectAllList();
-		System.out.println(AllList);
+		Pagination paginationVo = new Pagination(bankService.getListCount(), page); // 모든 게시글 개수 구하기.
+		paginationVo.setPage(page);
+		List<BankDto> listPage = bankService.getListPage(paginationVo);
 		
+		//List<Map<String, Object>> AllList = testtableService.SelectAllList();
+		//System.out.println(AllList);
 		
-		mav.addObject("Alllist", AllList);
+		mav.addObject("Alllist", listPage);
+		mav.addObject("page", page);
+		mav.addObject("pageVo", paginationVo);
 		mav.setViewName("list");
 		return mav;
 	}
