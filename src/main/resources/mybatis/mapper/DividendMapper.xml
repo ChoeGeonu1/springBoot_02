@@ -1,0 +1,169 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+  
+<mapper namespace="com.example.spring.myapp.mapper.DividendMapper">
+ 
+ <select id="dividendList" resultType="com.example.spring.myapp.dto.DividendDto">
+		 SELECT 
+			turn
+			,yearmonth
+			,category
+			,january
+			,february
+			,march
+			,april
+			,may
+			,june
+			,july
+			,august
+			,september
+			,october
+			,november
+			,december  
+		FROM dividend
+		 where 1=1 
+		 <choose>
+		 <!-- 로그인 안했을 경우  -->
+		 	<when test=' "null".equals(id) '>
+		 and CATEGORY like '%테스트%'
+		 	</when>
+		 	<when test='id != "null" and !"".equals(id)'>
+		 and ID = #{id}
+		 	<if test='!"".equals(yearmonth)'>
+		 and yearmonth = #{yearmonth}
+		 	</if>
+		 	<if test=' "".equals(yearmonth)'>
+		 and yearmonth = (select max(yearmonth) from dividend where ID = #{id})
+		 	</if>
+		 	</when>
+		 	<otherwise>
+		 	</otherwise>
+		 </choose>
+			ORDER BY 1, 2 desc
+ </select>
+ 
+ <insert id="dividendInsert" parameterType="com.example.spring.myapp.dto.DividendDto" >
+ 	INSERT 	INTO DIVIDEND
+		(	TURN,
+			YEARMONTH,
+			CATEGORY,
+			JANUARY,
+			FEBRUARY,
+			MARCH,
+			APRIL,
+			MAY,
+			JUNE,
+			JULY,
+			AUGUST,
+			SEPTEMBER,
+			OCTOBER,
+			NOVEMBER,
+			DECEMBER,
+			ID)
+		VALUES(
+		DIVIDEND_SEQ.NEXTVAL,
+		#{yearmonth},
+		#{category},
+		COALESCE(#{january} ,'0') ,
+		COALESCE(#{february} ,'0') ,
+		COALESCE(#{march} ,'0') ,
+		COALESCE(#{april} ,'0') ,
+		COALESCE(#{may} ,'0') ,
+		COALESCE(#{june} ,'0') ,
+		COALESCE(#{july} ,'0') ,
+		COALESCE(#{august} ,'0') ,
+		COALESCE(#{september} ,'0') ,
+		COALESCE(#{october} ,'0') ,
+		COALESCE(#{november} ,'0') ,
+		COALESCE(#{december},'0')  ,
+		#{id}
+		) 	
+ </insert>
+ 
+ <select id="yearmonthList" parameterType="com.example.spring.myapp.dto.DividendDto" resultType="com.example.spring.myapp.dto.DividendDto">
+ 	SELECT DISTINCT yearmonth 
+ 			FROM DIVIDEND
+ 		where 1=1
+ 		 <choose>
+		 <!-- 로그인 안했을 경우  -->
+		 	<when test=' "null".equals(id) '>
+		 and CATEGORY like '%테스트%'
+		 	</when>
+		 	<when test='id != "null" and !"".equals(id)'>
+		 and ID = #{id}
+		 	</when>
+		 	<otherwise>
+		 	</otherwise>
+		 </choose>
+		 order by 1 desc
+ </select>
+ 
+ <update id="dividendUpdate" parameterType="com.example.spring.myapp.dto.DividendDto">
+ 
+ 	UPDATE
+		DIVIDEND
+			SET
+				JANUARY = COALESCE(#{january} ,'0') ,
+				FEBRUARY = COALESCE(#{february} ,'0') ,
+				MARCH = COALESCE(#{march} ,'0') ,
+				APRIL = COALESCE(#{april} ,'0') ,
+				MAY = COALESCE(#{may} ,'0') ,
+				JUNE = COALESCE(#{june} ,'0') ,
+				JULY = COALESCE(#{july} ,'0') ,
+				AUGUST = COALESCE(#{august} ,'0') ,
+				SEPTEMBER = COALESCE(#{september} ,'0') ,
+				OCTOBER = COALESCE(#{october} ,'0') ,
+				NOVEMBER = COALESCE(#{november} ,'0') ,
+				DECEMBER = COALESCE(#{december},'0') 
+			WHERE YEARMONTH	= #{yearmonth}
+ 						AND CATEGORY = #{category} 
+ </update>
+ 
+ <insert id="dividendLogInsert" parameterType="com.example.spring.myapp.dto.DividendLogDto">
+  	INSERT 	INTO 	DIVIDEND_LOG
+			(
+				REGISTRATION_DATE,
+				REGISTERED_TIME,
+				CLSFC_CODE,
+				YEARMONTH,
+				CATEGORY,
+				JANUARY,
+				FEBRUARY,
+				MARCH,
+				APRIL,
+				MAY,
+				JUNE,
+				JULY,
+				AUGUST,
+				SEPTEMBER,
+				OCTOBER,
+				NOVEMBER,
+				DECEMBER,
+				id)
+			VALUES(
+					to_char(sysdate , 'yyyymmdd') ,
+					TO_CHAR(SYSTIMESTAMP, 'HH24MISSFF2'),
+					#{clsfc_Code}, 				  /*구분코드*/
+					#{yearmonth}, 				  /*년도월*/
+					#{category}, 				  /*항목*/
+					COALESCE(#{january},	'0'), /*1월*/
+					COALESCE(#{february},	'0'), /*2월*/
+					COALESCE(#{march},		'0'), /*3월*/
+					COALESCE(#{april},		'0'), /*4월*/
+					COALESCE(#{may},		'0'), /*5월*/
+					COALESCE(#{june},		'0'), /*6월*/
+					COALESCE(#{july},		'0'), /*7월*/
+					COALESCE(#{august},		'0'), /*8월*/
+					COALESCE(#{september},	'0'), /*9월*/
+					COALESCE(#{october},	'0'), /*10월*/
+					COALESCE(#{november},	'0'), /*11월*/
+					COALESCE(#{december},	'0'), /*12월*/
+					#{id}  /*등록자*/
+			) 
+ </insert>
+ <select id="DIVIDEND_LOG_SELECT" resultType="com.example.spring.myapp.dto.DividendLogDto">
+ 	select * from DIVIDEND_LOG
+ </select>
+</mapper>

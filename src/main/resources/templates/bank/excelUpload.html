@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorator="layout/default_layout">
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+<script	src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.16.9/xlsx.full.min.js"></script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+<style type="text/css">
+.scrollDiv{
+overflow-y: scroll; 
+height:500px;
+
+}
+.scrolltable{
+ width: 100%
+}
+table thead td {
+	background-color: #54585d;
+	color: #ffffff;
+	font-weight: bold;
+	font-size: 13px;
+	border: 1px solid #54585d;
+}
+table tbody td {
+	color: #636363;
+	border: 1px solid #dddfe1;
+}
+table tbody tr {
+	background-color: #f9fafb;
+}
+table tbody tr:nth-child(odd) {
+	background-color: #ffffff;
+}
+</style>
+<script type="text/javascript">
+function readExcel() {
+    let input = event.target;
+    let reader = new FileReader();
+    const ulNode = document.getElementById("list");
+   
+    reader.onload = function () {
+    	
+       // console.log('SheetName: ');
+        let data = reader.result;
+        let workBook = XLSX.read(data, { type: 'binary' });
+        workBook.SheetNames.forEach(function (sheetName) {
+            let rows = XLSX.utils.sheet_to_json(workBook.Sheets[sheetName]);
+            let json = JSON.stringify(rows)
+            let obj = JSON.parse(json);
+            
+            var html = "<table id='scrolltable' name='scrolltable' class='scrolltable'>";
+			// 동적 테이블 삭제            
+			 $('#scrolltable').remove();
+            	let datahead = "<thead><tr>";
+            	let data = "<tbody><tr>";
+            for(var k = 0 ; k < obj.length; k++){
+            	for(key in obj[k]){
+            		if(0 == k){
+            			datahead += "<td name='category_"+(k+1)+"' id='category_"+ (k+1)+"' >"+ key + "</td>";
+            			//datahead += "<td name='itemName' id='itemName' class='itemName' >"+ obj[k][key] + "</td>";
+            		}
+            		data += "<td name='breakdown_"+(k+1)+"' id='breakdown_"+(k+1)+"'>"+ obj[k][key] + "</td>";
+            	}
+            	datahead += "</tr></thead>";
+            	data += "</tr></tbody>";
+            }
+            html  += datahead;
+            html  += data;
+            html += "</table>"
+            ulNode.insertAdjacentHTML("afterbegin", html);
+        })
+    };
+    reader.readAsBinaryString(input.files[0]);
+}
+
+//null 체크	
+function isNullChek( val ){
+	if(val == null || typeof(val) == "undefined" || '' == val ) {
+	return true;
+	}
+	return false;
+}
+
+function homzzang() {
+	//alert("클릭 이벤ㅌ트");
+	var jsonObj = tableToJson(document.getElementById("scrolltable")); // table id를 던지고 함수를
+	//alert("클릭 이벤ㅌ트  "+ JSON.stringify(jsonObj));
+	//console.log(JSON.stringify(jsonObj));
+	//console.log(jsonObj);
+	$.ajax({
+		　　type:'post'
+		　　, contentType:'application/json'
+		　　, data: JSON.stringify(jsonObj)
+		　　, url: '/excelUpload.do'
+		　　, success: function(data) {
+			if(2 == data){
+		　　　　alert("성공");
+			// Post 데이터는 포함하지 않으며 페이지를 새로 고침 합니다.
+			// 이 때 현재 이력을 수정하여 페이지를 불러오기때문에 history에 새로은 이력은 추가되지 않습니다.
+			location.replace(location.href);
+			}else{
+			  alert("오류");
+			}
+		　　}, error:function(e) {
+		　　　　alert("error: " + e);
+		　　}
+		});
+}
+	
+function tableToJson(table) { // 변환 함수
+    var data = [];
+
+    var headers = [];
+    var headers2 = [];
+    	var rowDataHead = {};
+    for(var i=0; i<table.rows[0].cells.length; i++) {
+        headers[i] = table.rows[0].cells[i].innerHTML.toLowerCase().replace(/ /gi,'');
+        if(2 == i.length){
+        headers2[i] = "breakdown_"+(i+1);
+        rowDataHead["category_"+(i+1)] = headers[i] ;
+        }else{
+        	headers2[i] = "breakdown_0"+(i+1);
+            rowDataHead["category_0"+(i+1)] = headers[i] ;
+        }
+    }
+        data.push(rowDataHead);
+
+    for(var i=1; i<table.rows.length; i++) {
+        var tableRow = table.rows[i];
+        var rowData = {};
+
+        for(var j=0; j<tableRow.cells.length; j++) {
+            rowData[headers2[j]] = tableRow.cells[j].innerHTML;
+        }
+        data.push(rowData);
+    }
+
+    return data;
+}	
+	
+</script>
+</head>
+
+<body>
+<th:block layout:fragment="content">
+<h1>엑셀 업로드</h1>
+<input type="file" onchange="readExcel()">
+<button onclick="homzzang()">클릭</button>
+<!-- <input type="file" id="fileUpload" /> -->
+<form id="optionForm" method="post"  action="">
+		<div id="list" class="scrollDiv">
+		</div>
+		</form>
+</th:block>
+</body>
+</html>

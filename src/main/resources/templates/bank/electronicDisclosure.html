@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorator="layout/default_layout">
+<head>
+<meta charset="UTF-8">
+<title>전자공시</title>
+<script type="text/javascript" th:src="@{/JS/common.js}"></script>
+<style type="text/css">
+.search {
+  position: relative;
+  width: 300px;
+}
+input {
+  width: 100%;
+  border: 1px solid #bbb;
+  border-radius: 8px;
+  padding: 10px 12px;
+  font-size: 14px;
+}
+
+img {
+  position : absolute;
+  width: 17px;
+  top: 10px;
+  right: 12px;
+  margin: 0;
+}
+
+     #submit{ 
+         width: 127px; 
+         height: 48px; 
+         text-align: center; 
+         border: none; 
+         margin-top: 20px; 
+         cursor: pointer; 
+     } 
+     #submit:hover{ 
+         color: #fff; 
+         background-color: #216282; 
+         opacity: 0.9; 
+     } 
+     #cancel { 
+         width: 127px; height: 48px; 
+         text-align: center; 
+         border: none; 
+         margin-top: 20px; 
+         cursor: pointer; 
+     } 
+     #cancel:hover{ 
+         color: #fff; 
+         background-color: #216282; 
+         opacity: 0.9; 
+     }
+
+    .modal { 
+         position: fixed; 
+         left: 0; 
+         top: 0; 
+         width: 100%; 
+         height: 100%; 
+         background-color: rgba(0, 0, 0, 0.5); 
+         opacity: 0; 
+         visibility: hidden; 
+         transform: scale(1.1); 
+         transition: visibility 0s linear 0.25s, opacity 0.25s 0s, transform 0.25s; 
+     } 
+     .modal-content { 
+         position: absolute; 
+         top: 50%; 
+         left: 50%; 
+         transform: translate(-50%, -50%); 
+         background-color: white; 
+         padding: 1rem 1.5rem; 
+         width: 500px; 
+         height: 350px; 
+         border-radius: 0.5rem; 
+     } 
+     .close-button { 
+         float: right; 
+         width: 1.5rem; 
+         line-height: 1.5rem; 
+         text-align: center; 
+         cursor: pointer; 
+         border-radius: 0.25rem; 
+         background-color: lightgray; 
+     } 
+     .close-button:hover { 
+         background-color: darkgray; 
+     } 
+     .show-modal { 
+         opacity: 1; 
+         visibility: visible; 
+         transform: scale(1.0); 
+         transition: visibility 0s linear 0s, opacity 0.25s 0s, transform 0.25s; 
+     } 
+</style>
+<script type="text/javascript">
+// HTML이 다 브라우저에 뿌려진 후에 해당 DIV를 HIDE 시키기 위함
+window.onload = function () {
+	// 안보이게
+	document.getElementById("div_load_image").style.display ='none';
+	
+		
+		/* var modal = document.querySelector(".modal"); 
+	    var trigger = document.querySelector(".trigger"); 
+	    var closeButton = document.querySelector(".close-button"); 
+	    var cancelButton = document.querySelector("#cancel");
+	    
+	    function toggleModal() { 
+	        modal.classList.toggle("show-modal"); 
+	    }
+
+	   function windowOnClick(event) { 
+	        if (event.target === modal) { 
+	            toggleModal(); 
+	        } 
+	    }
+
+	   trigger.addEventListener("click", toggleModal); 
+	    closeButton.addEventListener("click", toggleModal); 
+	    cancel.addEventListener("click", toggleModal); 
+	    window.addEventListener("click", windowOnClick);  */
+	    
+	
+	}
+
+function myFunction() { 
+	let yearmonth  = document.getElementById('corp_name').value;
+	if(isNullChek(yearmonth) ){ 
+		alert("검색어를 입력해주세요.")
+		return;
+	};
+	document.board.action = 'electronicDisclosureCall';
+	document.board.submit();
+	// 보이게
+	document.getElementById("div_load_image").style.display ='block';
+} 
+window.onload = function () {
+	   //$("#div_load_image").hide();
+	   // 안보이게
+		document.getElementById("div_load_image").style.display ='none';
+	}
+
+function input_click(){
+	
+	var modal = document.querySelector(".modal"); 
+    var trigger = document.querySelector(".trigger"); 
+    var closeButton = document.querySelector(".close-button"); 
+    var cancelButton = document.querySelector("#cancel");
+    function toggleModal() { 
+        modal.classList.toggle("show-modal"); 
+    }
+    function windowOnClick(event) { 
+        if (event.target === modal) { 
+            toggleModal(); 
+        } 
+    }
+    
+    trigger.addEventListener("click", toggleModal); 
+    closeButton.addEventListener("click", toggleModal); 
+    cancel.addEventListener("click", toggleModal); 
+    window.addEventListener("click", windowOnClick); 
+    alert();
+}
+</script>
+</head>
+<body >
+  <th:block layout:fragment="content">
+  <!-- 로딩바 -->
+  <div id="div_load_image" style="position:absolute; top:50%; left:50%;width:0px;height:0px; z-index:9999; background:#f0f0f0; filter:alpha(opacity=50); opacity:alpha*0.5; margin:auto; padding:0; text-align:center">
+      <img src="/IMG/loading.gif" style="width:100px; height:100px;">
+  </div>
+  
+	<H1>전자공시</H1>
+	<form id="ModifyForm" name="board" method="get">
+		<div class="search">
+		  <input type="text" name="corp_name" id="corp_name" placeholder="검색어 입력" onclick="input_click()">
+		  <img src="https://s3.ap-northeast-2.amazonaws.com/cdn.wecode.co.kr/icon/search.png" onclick="myFunction()">
+		</div>
+	</form>
+			<table>
+				<thead>
+					<tr>
+						<th>법인구분</th>
+						<th>종목명(법인명)</th>
+						<th>고유번호</th>
+						<th>종목코드</th>
+						<th>보고서명</th>
+						<th>접수번호</th>
+						<th>공시 제출인명</th>
+						<th>접수일자</th>
+						<th>비고</th>
+					</tr>
+				</thead>
+			<th:block th:each="dList: ${requestList}">
+				<tbody>
+					<tr th:if="${dList.status == '000'}">
+						<th:block th:switch="${dList.corp_cls}">
+							<td th:case="Y">유가(Y)</td>
+							<td th:case="K">코스닥(K)</td>
+							<td th:case="N">코넥스(N)</td>
+							<td th:case="E">기타(E)</td>
+						</th:block>
+						<td th:text="${dList.corp_name}">종목명(법인명)</td>
+						<td th:text="${dList.corp_code}">고유번호</td>
+						<td th:text="${dList.stock_code}">종목코드</td>
+						<td th:text="${dList.report_nm}">보고서명</td>
+						<td th:text="${dList.rcept_no}">접수번호</td>
+						<td th:text="${dList.flr_nm}">공시 제출인명</td>
+						<td th:text="${dList.rcept_dt}">접수일자</td>
+						<td th:text="${dList.rm}">비고</td>
+					</tr>
+					
+					<tr th:if="${dList.status != '000'}">
+						<td colspan="9" th:text="${dList.message}">111</td>
+					</tr>
+					
+				</tbody>
+			</th:block>
+			</table>
+</th:block>
+
+     <!-- 팝업 될 레이어 --> 
+     <div class="modal"> 
+         <div class="modal-content"> 
+             <span class="close-button">&times;</span> 
+             <h1 class="title">메일 보내기</h1> 
+             <form action="#post.php" method="POST"> 
+               <label for="email">Email</label> 
+               <input type="email" name="email" placeholder="Your email" required="required"> 
+               <label></label> 
+               <textarea name="message" placeholder="Test Message" required="required"></textarea> 
+               <input type="button" id="cancel" value="취소"> 
+               <input type="submit" id="submit" value="보내기"> 
+             </form> 
+         </div> 
+     </div>
+
+</body>
+</html>

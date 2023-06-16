@@ -1,0 +1,216 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.example.spring.myapp.mapper.BankMapper">
+
+	<!-- 게시물 총 개수 구하기 -->
+	<select id="getListCount" resultType="int">
+		SELECT count(*) as listCnt
+		FROM BANK_DETAILS
+	</select>
+
+	<select id="getListPage" parameterType="com.example.spring.paging.Pagination"	resultType="com.example.spring.myapp.dto.BankDto">
+<![CDATA[
+			SELECT 
+			*
+			FROM (
+			SELECT 
+			NUM, NUM as n_d_no,value_1, VALUE_4
+			  FROM (
+			        SELECT 
+			        	 ROW_NUMBER() OVER (ORDER BY N_D_NO,VALUE_1) NUM
+			             ,ID_1||' : '||value_1 AS value_1, ID_4|| ' : '||VALUE_4 AS VALUE_4
+			          FROM TESTUSER.BANK_DETAILS A
+			        ) 
+			 WHERE NUM <=  (#{page} * #{rowCount})
+			)
+			WHERE (((#{page}-1) * #{rowCount}) + 1) <= NUM
+]]>
+	</select>
+	<insert id="bankRackDetailsTableInsert" parameterType="com.example.spring.myapp.dto.BankRackDetailsTableDto">
+
+		INSERT INTO BANK_RACK_DETAILS_TABLE
+		( REGISTRATION_ORDER,
+			ITEM_NAME,
+			BREAKDOWN_01,
+			BREAKDOWN_02,
+			BREAKDOWN_03,
+			BREAKDOWN_04,
+			BREAKDOWN_05,
+			BREAKDOWN_06,
+			BREAKDOWN_07,
+			BREAKDOWN_08,
+			BREAKDOWN_09,
+			BREAKDOWN_10,
+			REGISTRATION_DATE)
+		VALUES(
+			BANK_RACK_DETAILS_SEQ.NEXTVAL,
+			#{item_Name},
+			#{breakdown_01},
+			#{breakdown_02},
+			#{breakdown_03},
+			#{breakdown_04},
+			#{breakdown_05},
+			#{breakdown_06},
+			#{breakdown_07},
+			#{breakdown_08},
+			#{breakdown_09},
+			#{breakdown_10},
+			SYSDATE
+		)
+	</insert>
+
+	<select id="bankRackDetailsList" resultType="com.example.spring.myapp.dto.BankRackDetailsTableDto" parameterType="com.example.spring.paging.Pagination">
+	<![CDATA[
+		SELECT 		NUM AS REGISTRATION_ORDER,
+					ITEM_NAME,
+					BREAKDOWN_01,
+					BREAKDOWN_02,
+					BREAKDOWN_03,
+					BREAKDOWN_04,
+					BREAKDOWN_05,
+					BREAKDOWN_06,
+					BREAKDOWN_07,
+					BREAKDOWN_08,
+					BREAKDOWN_09,
+					BREAKDOWN_10
+		FROM 
+				(
+					SELECT * FROM 
+						(
+						SELECT
+							ROW_NUMBER() OVER (ORDER BY TO_NUMBER(REGISTRATION_ORDER) desc ,REGEXP_REPLACE(BREAKDOWN_02, '[[:punct:]]', '') desc ,ITEM_NAME) NUM,
+							ITEM_NAME,
+							BREAKDOWN_01,
+							SUBSTR(REGEXP_REPLACE(BREAKDOWN_02, '[[:punct:]]')  , 0, 8)  as BREAKDOWN_02,
+							BREAKDOWN_03,
+							BREAKDOWN_04,
+							BREAKDOWN_05,
+							BREAKDOWN_06,
+							BREAKDOWN_07,
+							BREAKDOWN_08,
+							BREAKDOWN_09,
+							BREAKDOWN_10
+						FROM
+							BANK_RACK_DETAILS_TABLE
+						WHERE ITEM_NAME like '%'||#{item_Name} || '%'	
+					)
+						WHERE NUM <=  (#{page} * #{rowCount})
+				)
+		WHERE (((#{page}-1) * #{rowCount}) + 1) <= NUM
+	]]>
+	</select>
+	<!-- 게시물 총 개수 구하기 -->
+	<select id="getbankRackDetaiCnt" resultType="int" parameterType="String">
+		SELECT 
+			count(*) as listCnt
+		FROM BANK_RACK_DETAILS_TABLE 
+			WHERE ITEM_NAME like '%'||#{item_Name} || '%'	
+	</select>	
+<!-- 
+
+SELECT 
+			*
+		FROM (
+		SELECT
+			ROW_NUMBER() OVER (ORDER BY TO_NUMBER(REGISTRATION_ORDER) ,ITEM_NAME) AS REGISTRATION_ORDER,
+			ITEM_NAME,
+			CATEGORY_01 AS BREAKDOWN_01,
+			CATEGORY_02 AS BREAKDOWN_02,
+			CATEGORY_03 AS BREAKDOWN_03,
+			CATEGORY_04 AS BREAKDOWN_04,
+			CATEGORY_05 AS BREAKDOWN_05,
+			CATEGORY_06 AS BREAKDOWN_06,
+			CATEGORY_07 AS BREAKDOWN_07,
+			CATEGORY_08 AS BREAKDOWN_08,
+			CATEGORY_09 AS BREAKDOWN_09,
+			CATEGORY_10 AS BREAKDOWN_10
+		FROM
+			COMMON_ITEM_TABLE
+				WHERE ITEM_NAME like '모바일%'
+			
+		UNION all
+		SELECT 		NUM AS REGISTRATION_ORDER,
+					ITEM_NAME,
+					BREAKDOWN_01,
+					BREAKDOWN_02,
+					BREAKDOWN_03,
+					BREAKDOWN_04,
+					BREAKDOWN_05,
+					BREAKDOWN_06,
+					BREAKDOWN_07,
+					BREAKDOWN_08,
+					BREAKDOWN_09,
+					BREAKDOWN_10
+		FROM 
+				(
+					SELECT * FROM 
+						(
+						SELECT
+							ROW_NUMBER() OVER (ORDER BY TO_NUMBER(REGISTRATION_ORDER) ,ITEM_NAME) NUM,
+							ITEM_NAME,
+							BREAKDOWN_01,
+							BREAKDOWN_02,
+							BREAKDOWN_03,
+							BREAKDOWN_04,
+							BREAKDOWN_05,
+							BREAKDOWN_06,
+							BREAKDOWN_07,
+							BREAKDOWN_08,
+							BREAKDOWN_09,
+							BREAKDOWN_10
+						FROM
+							BANK_RACK_DETAILS_TABLE
+						WHERE ITEM_NAME like '모바일%'	)
+						WHERE NUM <=  (#{page} * #{rowCount})
+				)
+		WHERE (((#{page}-1) * #{rowCount}) + 1) <= NUM
+		)
+ -->	
+ <insert id="stockManageInsert" parameterType="com.example.spring.myapp.dto.StockManage">
+ 	INSERT 	INTO STOCK_MANAGEMENT_TABLE
+		(
+			REGISTRATION_ORDER,
+			STOCK_NAME,
+			SHARES,
+			STOCK_DIVIDENDS,
+			MAEIPKKEUM,
+			DIVIDENDS,
+			REGISTRATION_DATE)
+		VALUES(
+				STOCK_MANAGEMENT_SEQ.NEXTVAL, /* 순번 */
+				#{stock_name}, /* 주식명 */
+				#{shares},   /* 주식수 */
+				#{stock_dividends},  /* 배당주기 */
+				#{maeipkkeum}, /* 매입금 */
+				#{dividends}, /* 배당금 */
+				sysdate 
+		)
+ </insert>
+ 
+  <select id="stockManageSelect" resultType="com.example.spring.myapp.dto.StockManage">
+ 	SELECT
+		REGISTRATION_ORDER,
+		STOCK_NAME,
+		SHARES,
+		STOCK_DIVIDENDS,
+		MAEIPKKEUM,
+		DIVIDENDS,
+		REGISTRATION_DATE
+	FROM
+		STOCK_MANAGEMENT_TABLE
+	order by STOCK_NAME	 	
+ </select>
+ <!-- 주식 수정 -->
+ <update id="stockManageUpdate" parameterType="com.example.spring.myapp.dto.StockManage">
+ 	UPDATE STOCK_MANAGEMENT_TABLE
+ 		set SHARES = #{shares}, /* 주식수 */
+ 			STOCK_DIVIDENDS = #{stock_dividends}, /* 배당주기 */
+ 			MAEIPKKEUM = #{maeipkkeum}, /* 매입금 */
+ 			DIVIDENDS = #{dividends} /* 배당금 */
+ 	where 	STOCK_NAME = #{stock_name}
+ </update>
+
+</mapper>

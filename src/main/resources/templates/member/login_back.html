@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorator="layout/default_layout">
+<head>
+    <meta charset="UTF-8">
+    <link href="https://fonts.googleapis.com/earlyaccess/notosanskr.css" rel="stylesheet">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <title>로그인</title>
+<style>
+
+ 
+.login-form {
+    width: 300px;
+    background-color: #EEEFF1;
+    margin-right: auto;
+    margin-left: auto;
+    margin-top: 50px;
+    padding: 20px;
+    text-align: center;
+    border: none;
+    
+}
+ 
+.text-field {
+      font-size: 14px;
+      padding: 10px;
+      border: none;
+      width: 260px;
+      margin-bottom: 10px;
+ 
+}
+ 
+.submit-btn {
+  font-size: 14px;
+  border: none;
+  padding: 10px;
+  width: 260px;
+  background-color: #1BBC9B;
+  margin-bottom: 30px;
+  color: white;
+}
+ 
+.links {
+    text-align: center;
+}
+ 
+.links a {
+  font-size: 12px;
+  color: #9B9B9B;
+}
+</style>
+</head>
+<body>
+  <th:block layout:fragment="content">
+		<H1>로그인</H1>
+    <div id="app" class="login-form">
+        <table>
+            <tr>
+                <td>
+                    <input type="text" id="id" placeholder="아이디" size="20" class="text-field" />
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <input type="password" id="pwd" placeholder="비밀번호" size="20" onkeypress="return runScript(event)" class="text-field" />
+                </td>
+            </tr>
+            <tr>
+                <td colspan="2">
+                    <button type="button" id="login" class="submit-btn">로그인</button>
+                    <!-- <a href="account">회원가입</a> -->
+                </td>
+            </tr>
+        </table>
+        <div class="links">
+      <a href="account">회원가입</a> 
+    </div>
+    </div>
+			<!-- <button th:onclick="ajax_set22();">테스트</button> -->
+
+    <script>
+    
+	function ajax_set(){
+		$.ajax({
+	        //url: "http://localhost:5043/login",
+	        url: "/login",
+	        type: "POST",
+	        data: {
+	            id: $("#id").val(),
+	            pwd: $("#pwd").val()
+	        },
+	        success: function(json) {
+	            // alert('success');
+	            // alert(JSON.stringify(json));
+	            if(json === "") {
+	                alert("아이디 또는 비밀번호를 확인하세요.");
+	                $("#id").val("");
+	                $("#pwd").val("");
+	            } else {
+	                // 로그인 정보를 세션에 저장
+	                sessionStorage.setItem("login", JSON.stringify(json));
+	                alert(`${json.name}님 환영합니다!`);
+	                //alert(JSON.stringify(json));
+	                console.log(json);
+	                location.href = "../stockManage";
+	            }
+	        },
+	        error: function(request, status, error) {
+	            alert('request');
+	            console.log("code: " + request.status)
+                console.log("message: " + request.responseText)
+                console.log("error: " + error);
+	        }
+	    })
+	}
+        // 로그인시 입력한 아이디와 비밀번호를 넘겨준다.
+        // 서버단의 로그인 함수가 MemberDto를 반환하기 때문에 프론트엔드단에서 JSON 형태로 넘어온다.
+        // 아무것도 입력하지 않으면 JSON의 각 Key에 대한 Value가 비어있을 것이기 때문에 조건식으로 검사해준다.
+        // 로그인이 처리되어 정상적으로 넘어왔다면 sessionStorage에 로그인 정보를 저장해서 다른 페이지로 넘겨줄 것이다.
+        $(document).ready(function() {
+            $("#login").click(function() {
+            	ajax_set();
+            });
+        });
+    </script>
+    </th:block>
+</body>
+</html>

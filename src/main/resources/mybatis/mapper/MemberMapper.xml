@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+  
+<mapper namespace="com.example.spring.myapp.mapper.MemberMapper">
+ 
+   <!-- 아아디 중복 확인 -->
+    <select id="getId" parameterType="com.example.spring.myapp.dto.MemberDto" resultType="java.lang.Integer">
+        SELECT nvl(COUNT(*), 0) FROM MEMBERS
+        WHERE ID = #{id}
+    </select>
+
+      <!-- 회원 가입 -->
+    <insert id="addMember" parameterType="com.example.spring.myapp.dto.MemberDto">
+        INSERT INTO MEMBERS(ID, PWD, NAME, EMAIL, AUTH)
+        VALUES (#{id}, #{pwd}, #{name}, #{email}, LPAD(member_seq.NEXTVAL,10,0))
+    </insert>
+
+      <!-- 로그인 -->
+    <select id="login" parameterType="com.example.spring.myapp.dto.MemberDto" resultType="com.example.spring.myapp.dto.MemberDto">
+        SELECT ID, NAME, EMAIL, AUTH FROM MEMBERS
+        WHERE ID = #{id} AND PWD = #{pwd}
+    </select>
+ 	<select id="selectList1111" resultType="String">
+ 		select 'str' as str from dual
+ 	</select>
+</mapper>

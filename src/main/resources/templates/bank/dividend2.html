@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorator="layout/default_layout">
+<head>
+<meta charset="UTF-8" />
+<title>배당금 등록</title>
+<script type="text/javascript" th:src="@{/JS/common.js}"></script>
+<script type="text/javascript" th:src="@{/JS/dividend.js}"></script>
+<!-- <style type="text/css" th:src="@{/CSS/dividend.css}"></style> -->
+<link rel="stylesheet" type="text/css" th:href="@{/CSS/dividend.css}">
+<!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/1.0.2/Chart.min.js"></script> -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.5.0/Chart.min.js"></script>
+<script src="https://code.jquery.com/jquery-3.4.1.js"></script>
+<style type="text/css">
+</style>
+<script th:inline="javascript">
+ //alert(data);
+ window.addEventListener('DOMContentLoaded', function()
+{
+ 	let data = /*[[${dAllList}]]*/ '';
+	 dividendList(data)
+});
+ function dividendList(data){
+		//alert(data.length);
+		const datasets = {};
+		const dataArray = [];
+	for(var key = 0; key < data.length; key++){
+		//console.log("생상 : "+generateRandomCode());
+		const datasets2 = {};
+			if(!isNullChek(data[key].category)){
+			const dataValue = [
+				data[key].january, 
+				data[key].february, 
+				data[key].march, 
+				data[key].april, 
+				data[key].may, 
+				data[key].june, 
+				data[key].july, 
+				data[key].august, 
+				data[key].september, 
+				data[key].october, 
+				data[key].november,
+				data[key].december
+				];
+			datasets2.data = dataValue;
+			datasets2.label = data[key].category;
+			datasets2.borderColor = generateRandomCode()
+			datasets2.fill = false
+			//datasets2.fillColor = generateRandomCode();
+			//datasets2.strokeColor = generateRandomCode();
+			//datasets2.pointColor = generateRandomCode();
+			//datasets2.pointStrokeColor = "#fff";
+			//datasets2.pointHighlightFill = "#fff";
+			//datasets2.pointHighlightFill = "#fff";
+			//datasets2.pointHighlightStroke = "rgba(220,220,220,1)";
+			dataArray.push(datasets2);
+			}
+		}
+		//lineChart(dataArray);
+		lineChart2(dataArray);
+}
+function lineChart(retData){
+	console.log(retData);
+			const data = {
+			        labels: ["1월","2월","3월","4월","5월","6월","7월","8월","9월","10월","11월","12월"],
+			        datasets: retData
+			    };
+			
+			    var ctx = document.getElementById("lineCanvas").getContext("2d");
+			    
+				// options for the chart
+			    const options = {
+						scales: {
+							y: {
+								beginAtZero: true
+							}
+						}
+					};
+			    var lineChart = new Chart(ctx).Line(data, options);
+};
+
+function lineChart2(dataArray){
+	new Chart(document.getElementById("line-chart"), {
+	    type: 'line',
+	    data: {
+	      labels: ["1월","2월","3월","4월","5월","6월","7월","8월","9월","10월","11월","12월"],
+	      datasets: dataArray
+	    },
+	    options: {
+	      title: {
+	        display: true,
+	        text: '년도 배당금 차트'
+	      }
+	    }
+	  });
+}
+
+function generateRandomCode() {
+    var myRandomColor = '#'+Math.floor(Math.random()*16777215).toString(16);
+     return myRandomColor;
+  }
+</script>
+</head>
+<body>
+  <th:block layout:fragment="content">
+			<H1>배당금 등록 화면</H1>
+			<!-- 년더 -->
+	<ul class="nav nav-tabs">
+		<li class="nav-item">
+			<a th:onclick="openPop2();" class="nav-link" >등록</a>
+		</li>
+	<th:block th:each="yearmonthList: ${yearmonthList}">
+  		<li class="nav-item">
+			<a th:href="@{'/dividend?yearmonth='+${yearmonthList.yearmonth}}"  th:text="${yearmonthList.yearmonth}" class="nav-link" >1111</a>
+		</li>
+	</th:block>
+	</ul>
+			
+		<div class="div_03">
+			<div class="div_02">
+				<div >년도</div>
+				<div>항목</div>
+				<!-- <div>합계</div> -->
+				<div>1월</div>
+				<div>2월</div>
+				<div>3월</div>
+				<div>4월</div>
+				<div>5월</div>
+				<div>6월</div>
+				<div>7월</div>
+				<div>8월</div>
+				<div>9월</div>
+				<div>10월</div>
+				<div>11월</div>
+				<div>12월</div>
+			</div>
+			<th:block th:each="dList: ${dAllList}">
+			<div class="div_02">
+				<div th:text="${dList.yearmonth}" ></div>
+				<div >
+					<a th:onclick="openPop([[${dList}]]);" th:text="${dList.category}"></a>
+				</div>
+				<!-- <div th:text="${'합계 : '+  #aggregates.sum(list.![dList.january]) * 1.0}"></div> -->
+				<div th:text="${dList.january}"></div>
+				<div th:text="${dList.february}"></div>
+				<div th:text="${dList.march}"></div>
+				<div th:text="${dList.april}"></div>
+				<div th:text="${dList.may}"></div>
+				<div th:text="${dList.june}"></div>
+				<div th:text="${dList.july}"></div>
+				<div th:text="${dList.august}"></div>
+				<div th:text="${dList.september}"></div>
+				<div th:text="${dList.october}"></div>
+				<div th:text="${dList.november}"></div>
+				<div th:text="${dList.december}"></div>
+				
+			</div>
+			</th:block>	
+		</div>
+		
+<!-- 모달창 -->
+      <div class="popup_layer" id="popup_layer" style="display: none;">
+		<div class="popup_box">
+			<!--팝업 컨텐츠 영역-->
+			<div class="popup_cont">
+			<form id="saveForm" method="post"  action="">
+			<div class="div_input">
+							<div>년도</div>
+			    			<div>항목</div>
+							<div>1월</div>
+							<div>2월</div>
+							<div>3월</div>
+							<div>4월</div>
+							<div>5월</div>
+							<div>6월</div>
+							<div>7월</div>
+							<div>8월</div>
+							<div>9월</div>
+							<div>10월</div>
+							<div>11월</div>
+							<div>12월</div>
+			</div>
+			<div class="div_input">
+							<input type="text" class="" name="yearmonth" 	id="yearmonth">
+							<input type="text" class="" name="category" 	id="category">
+							<input type="text" class="" name="january" 		id="january">
+			    			<input type="text" class="" name="february" 	id="february">
+			    			<input type="text" class="" name="march" 		id="march">
+			    			<input type="text" class="" name="april" 		id="april">
+			    			<input type="text" class="" name="may" 			id="may">
+			    			<input type="text" class="" name="june" 		id="june">
+			    			<input type="text" class="" name="july" 		id="july">
+			    			<input type="text" class="" name="august" 		id="august">
+			    			<input type="text" class="" name="september" 	id="september">
+			    			<input type="text" class="" name="october" 		id="october">
+			    			<input type="text" class="" name="november" 	id="november">
+			    			<input type="text" class="" name="december" 	id="december">
+			
+			</div> 
+	</form>
+			</div>
+			<!--팝업 버튼 영역-->
+			<div class="popup_btn" style="float: bottom;">
+				<a href="javascript:savePost();">저장</a>
+				<a href="javascript:closePop();">닫기</a>
+			</div>
+		</div>
+	</div>
+<!-- 모달창 -->
+
+<!-- <button onclick="lineChartAjax();">버튼1</button> -->
+  	<div class="graphBox " >
+		<canvas id="line-chart" style="width: 80%;" ></canvas>
+<!-- 		<canvas id="lineCanvas" style="width: 90%;" ></canvas> -->
+	</div>
+
+  </th:block>
+
+</body>
+</html>

@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.example.spring.myapp.mapper.CommonItemMapper">
+
+	<insert id="commonItemTableInsert" parameterType="com.example.spring.myapp.dto.CommonItemDto">
+		INSERT INTO COMMON_ITEM_TABLE
+			(REGISTRATION_ORDER, 
+			ITEM_NAME, 
+			CATEGORY_01, 
+			CATEGORY_02, 
+			CATEGORY_03,
+			CATEGORY_04,
+			CATEGORY_05, 
+			CATEGORY_06, 
+			CATEGORY_07, 
+			CATEGORY_08, 
+			CATEGORY_09,
+			CATEGORY_10, 
+			REGISTRATION_DATE)
+			VALUES(
+	           COMMON_ITEM_SEQ.NEXTVAL
+	          ,#{item_Name}
+	          ,#{category_01}
+	          ,#{category_02}
+	          ,#{category_03}
+	          ,#{category_04}
+	          ,#{category_05}
+	          ,#{category_06}
+	          ,#{category_07}
+	          ,#{category_08}
+	          ,#{category_09}
+	          ,#{category_10}
+	          , SYSDATE )
+
+	</insert>
+	
+	<select id="selectList" resultType="com.example.spring.myapp.dto.CommonItemDto" parameterType="String">
+			SELECT
+				REGISTRATION_ORDER,
+				ITEM_NAME,
+				CATEGORY_01,
+				CATEGORY_02,
+				CATEGORY_03,
+				CATEGORY_04,
+				CATEGORY_05,
+				CATEGORY_06,
+				CATEGORY_07,
+				CATEGORY_08,
+				CATEGORY_09,
+				CATEGORY_10,
+				REGISTRATION_DATE
+			FROM
+				COMMON_ITEM_TABLE
+			WHERE 1=1
+				and ITEM_NAME like '%'||#{item_Name} || '%'	
+	</select>
+	
+	<insert id="corpCodeInsert" parameterType="com.example.spring.myapp.dto.CorpCdoeDto">
+	INSERT INTO CORP_CDOE_TABLE
+		(
+			CORP_CODE, 
+			CORP_NAME, 
+			STOCK_CDOE, 
+			MODIFY_DATE
+		)
+		VALUES(
+			#{corp_code}, 
+			#{corp_name}, 
+			#{stock_code}, 
+			#{modify_date}
+		)
+	</insert>
+	<delete id="corpCodeDelete">
+		DELETE FROM CORP_CDOE_TABLE
+	</delete>
+	
+	<select id="corpCodeSelect" resultType="com.example.spring.myapp.dto.PublicSearchResultDto" parameterType="com.example.spring.myapp.dto.PublicSearchResultDto">
+			SELECT CORP_CODE FROM CORP_CDOE_TABLE WHERE CORP_NAME = #{corp_name}
+	</select>
+</mapper>

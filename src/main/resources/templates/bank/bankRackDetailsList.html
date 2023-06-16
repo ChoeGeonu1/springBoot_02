@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorator="layout/default_layout">
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+<!--  부트스트랩 css 사용 -->
+<link rel="stylesheet" type="text/css" th:href="@{/CSS/bootstrap.css}">
+<!--  부트스트랩 css 사용 -->
+<style type="text/css">
+</style>
+</head>
+<body>
+
+  <th:block layout:fragment="content">
+  <div>
+			<H1>은행 거래 내역</H1>
+			<form th:action="@{/bankRackDetailsList}" method="get">
+				<input type="text" name="item_Name">
+			    <button type="submit">검색</button>
+			</form>
+			<table id="scrolltable" class="table " >
+			<thead class="table-dark">
+				<tr th:if="${not #strings.isEmpty(comVo?.category_01)}">
+					<!-- <td th:if="${not #strings.isEmpty(comVo.item_Name)}" th:text="${comVo.item_Name}"></td> -->
+					<td th:if="${not #strings.isEmpty(comVo?.category_01)}"  th:text="${comVo?.category_01}"></td>
+					<td th:if="${not #strings.isEmpty(comVo?.category_02)}"  th:text="${comVo?.category_02}"></td>
+					<td th:if="${not #strings.isEmpty(comVo?.category_03)}"  th:text="${comVo?.category_03}"></td>
+					<td th:if="${not #strings.isEmpty(comVo?.category_04)}"  th:text="${comVo?.category_04}"></td>
+					<td th:if="${not #strings.isEmpty(comVo?.category_05)}"  th:text="${comVo?.category_05}"></td>
+					<td th:if="${not #strings.isEmpty(comVo?.category_06)}"  th:text="${comVo?.category_06}"></td>
+					<td th:if="${not #strings.isEmpty(comVo?.category_07)}"  th:text="${comVo?.category_07}"></td>
+					<td th:if="${not #strings.isEmpty(comVo?.category_08)}"  th:text="${comVo?.category_08}"></td>
+					<td th:if="${not #strings.isEmpty(comVo?.category_09)}"  th:text="${comVo?.category_09}"></td>
+					<td th:if="${not #strings.isEmpty(comVo?.category_10)}"  th:text="${comVo?.category_10}"></td>
+				</tr>
+				<tr th:if="${#strings.isEmpty(comVo?.category_01)}">
+					<!-- <td th:if="${not #strings.isEmpty(comVo.item_Name)}" th:text="${comVo.item_Name}"></td> -->
+					<td >항목_01</td>
+					<td >항목_02</td>
+					<td >항목_03</td>
+					<td >항목_04</td>
+					<td >항목_05</td>
+					<td >항목_06</td>
+					<td >항목_07</td>
+					<td >항목_08</td>
+					<td >항목_09</td>
+					<td >항목_10</td>
+				</tr>
+			</thead>
+			<th:block  th:each="row:${Alllist}" th:if="${#lists.size(Alllist)} != 0">
+			<tbody>
+					<tr>
+						<!-- <td th:text=${row.item_Name}></td> -->
+						<td th:if="${not #strings.isEmpty(row?.breakdown_01)}" th:text=${row.breakdown_01}></td>
+						<td th:if="${not #strings.isEmpty(row?.breakdown_01)}"  th:text=${row.breakdown_02}></td>
+						<td th:if="${not #strings.isEmpty(row?.breakdown_03)}"  th:text=${row.breakdown_03}></td>
+						<td th:if="${not #strings.isEmpty(row?.breakdown_04)}"  th:text=${row.breakdown_04}></td>
+						<td th:if="${not #strings.isEmpty(row?.breakdown_05)}"  th:text=${row.breakdown_05}></td>
+						<td th:if="${not #strings.isEmpty(row?.breakdown_06)}"  th:text=${row.breakdown_06}></td>
+						<td th:if="${not #strings.isEmpty(row?.breakdown_07)}"  th:text=${row.breakdown_07}></td>
+						<td th:if="${not #strings.isEmpty(row?.breakdown_08)}"  th:text=${row.breakdown_08}></td>
+						<td th:if="${not #strings.isEmpty(row?.breakdown_09)}"  th:text=${row.breakdown_09}></td>
+						<td th:if="${not #strings.isEmpty(row?.breakdown_10)}"  th:text=${row.breakdown_10}></td>
+					</tr>
+			</tbody>	
+			</th:block>
+			<th:block th:if="${#lists.size(Alllist)} == 0">
+			<tbody>
+					<tr>
+						<td >데이터 없음</td>
+						<td >데이터 없음</td>
+						<td >데이터 없음</td>
+						<td >데이터 없음</td>
+						<td >데이터 없음</td>
+						<td >데이터 없음</td>
+						<td >데이터 없음</td>
+						<td >데이터 없음</td>
+						<td >데이터 없음</td>
+						<td >데이터 없음</td>
+					</tr>
+			</tbody>	
+			</th:block>
+			</table>
+  </div>
+  <br>
+  <th:block th:if="${#lists.size(Alllist)} != 0">
+	<div class="div-parent">
+    <div class="pagination justify-content-center">
+        <!-- 맨 처음 페이지로 이동하는 버튼 -->
+			    <a class="page-link" th:if="${pageVo.startPage > 1}" th:href="@{/bankRackDetailsList?item_Name={cat}(page=1,cat=${pageVo.item_Name})}" th:text="|&emsp;처음&emsp;|"></a>
+				<!-- 이전 블록으로 이동하는 버튼 -->
+			    <a class="page-link" th:if="!(1 > ${pageVo.page * 1.0}/ ${pageVo.pageCount})  and 1 != ${pageVo.startPage}" th:href="@{/bankRackDetailsList?item_Name={cat}(page=${pageVo.startPage - 1},cat=${pageVo.item_Name})}" th:text="|&emsp;이전&emsp;|"></a>
+			    <!-- 시퀀스 보여주는 값을 변경. -->
+ 			    <a class="page-link" th:each="pageNum : ${#numbers.sequence(pageVo.startPage, pageVo.endPage)}" th:href="@{/bankRackDetailsList?item_Name={cat}(page=${pageNum},cat=${pageVo.item_Name})}" th:text="|&emsp;${pageNum}&emsp;|"></a>
+			    <!-- 다음 블록으로 이동하는 버튼 -->
+				<a class="page-link" th:if="${pageVo.endPage} < ${pageVo.totalPageCount}" th:href="@{/bankRackDetailsList?item_Name={cat}(page=${pageVo.endPage + 1},cat=${pageVo.item_Name})}" th:text="|&emsp;다음&emsp;|"></a>
+			    <!-- 맨 뒷 페이지로 이동하는 버튼 -->
+				<a class="page-link" th:if="${pageVo.endPage < pageVo.totalPageCount}" th:href="@{/bankRackDetailsList?item_Name={cat}(page=${pageVo.totalPageCount},cat=${pageVo.item_Name})}" th:text="|&emsp;끝&emsp;|"></a>
+    </div>
+	</div>
+  </th:block>
+  
+  
+  
+  </th:block>
+  
+</body>
+</html>

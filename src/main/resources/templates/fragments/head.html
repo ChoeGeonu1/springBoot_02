@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<th:block th:fragment="headFragment">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport"
+	content="width=device-width, initial-scale=1, shrink-to-fit=no">
+	<title>Melon</title>
+<!--  부트스트랩 css 사용 -->
+<link rel="stylesheet" type="text/css" th:href="@{/CSS/bootstrap.css}">
+<!--  부트스트랩 css 사용 -->
+	<!--  부트스트랩 js 사용 -->
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+	<script type="text/javascript" th:src="@{/JS/bootstrap.js}"></script>
+	<!--  부트스트랩 js 사용 -->
+	<script type="text/javascript" th:src="@{/JS/common.js}"></script>
+	<body>
+	<!-- <a th:if="${#strings.isEmpty(session.LOGIN_MEMBER_ID)}" href="login">로그인</a>
+		<H1 th:text="${session.LOGIN_MEMBER_ID}"></H1>
+	<a href="dividend">배당금 등록</a> -->
+	<div class="box">
+		<h1>자산 관리 화면임</h1>
+		<!-- <h1 class="dl" th:text="${ID}">오류</h1> -->
+		<!-- <H1 class="dl" ><a th:if="${!#strings.isEmpty(session.LOGIN_MEMBER_ID)}" href="/logout" role="button">로그아웃</a></H1> -->
+	</div>
+	
+	</body>
+	</head>
+</th:block>
+</html>
